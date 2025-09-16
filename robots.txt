@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /admin_register
+Disallow: /admin
+Disallow: /admin_TRUE
+Sitemap: https://dnevnik22.ru/sitemap.xml
