@@ -1,0 +1,311 @@
+{% extends "base.html" %}
+
+{% block content %}
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Регистрация</title>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --space-black: #0A0F1F;
+            --quantum-blue: #00F0FF;
+            --cyber-purple: #7D4FFF;
+            --pure-white: #FFFFFF;
+            --card-bg: rgba(16, 18, 33, 0.7);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --gradient-1: linear-gradient(135deg, #00F0FF 0%, #7D4FFF 100%);
+        }
+
+        body {
+            font-family: 'Manrope', sans-serif;
+            background-color: var(--space-black);
+            color: var(--pure-white);
+            margin: 0;
+            padding: 0;
+        }
+
+        .forum-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .forum-header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .forum-title {
+            font-size: 2rem;
+            font-weight: 700;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+        }
+
+        .form-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem 3rem;
+            margin-bottom: 1rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Убраны эффекты при наведении */
+        .form-card::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: var(--gradient-1);
+            opacity: 0; /* Оставляем без анимации */
+        }
+
+        .form-group {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 20px;
+            font-size: 16px;
+            color: var(--pure-white);
+            background: rgba(10, 15, 31, 0.5);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            outline: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            font-family: 'Manrope', sans-serif;
+        }
+
+        .form-control:focus {
+            border-color: var(--quantum-blue);
+            box-shadow: 0 0 0 3px rgba(0, 240, 255, 0.2);
+        }
+
+        .form-control-select {
+            width: 100%;
+            padding: 12px 60px 12px 20px;
+            font-size: 16px;
+            color: var(--pure-white);
+            background: rgba(10, 15, 31, 0.5);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            outline: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            font-family: 'Manrope', sans-serif;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='%2300F0FF' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 30px center;
+            background-size: 20px;
+            cursor: pointer;
+        }
+
+        .form-control-select:focus {
+            border-color: var(--quantum-blue);
+            box-shadow: 0 0 0 3px rgba(0, 240, 255, 0.2);
+        }
+
+        .form-control-select option {
+            background: var(--space-black);
+            color: var(--pure-white);
+            padding: 12px;
+            font-size: 16px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--pure-white);
+            font-size: 15px;
+        }
+
+        .btn-submit {
+            background: var(--gradient-1);
+            color: white;
+            border: none;
+            padding: 12px 40px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 6px 15px rgba(125, 79, 255, 0.3);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            font-family: 'Manrope', sans-serif;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(125, 79, 255, 0.4);
+        }
+
+        .btn-custom {
+            background-color: rgba(0, 240, 255, 0.1);
+            color: var(--quantum-blue);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            padding: 8px 25px;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            margin: 5px;
+            cursor: pointer;
+        }
+
+        .btn-custom.active {
+            background-color: rgba(0, 240, 255, 0.3);
+            border-color: var(--quantum-blue);
+        }
+
+        .btn-custom:hover {
+            background-color: rgba(0, 240, 255, 0.2);
+            border-color: var(--quantum-blue);
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .alert {
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 14px;
+            background: rgba(243, 156, 18, 0.15);
+            color: #f39c12;
+            border: 1px solid rgba(243, 156, 18, 0.3);
+            font-family: 'Manrope', sans-serif;
+        }
+
+        .message-success {
+            background: rgba(46, 204, 113, 0.15);
+            color: #2ecc71;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 14px;
+            border: 1px solid rgba(46, 204, 113, 0.3);
+            text-align: center;
+        }
+
+        .btn-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        @media (max-width: 768px) {
+            .forum-container {
+                padding: 20px 15px;
+                max-width: 100%;
+            }
+
+            .form-card {
+                padding: 20px;
+            }
+
+            .btn-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn-custom {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+    </style>
+</head>
+
+<div class="forum-container">
+    <div class="forum-header">
+        <h1 class="forum-title">Регистрация</h1>
+    </div>
+
+    <div class="form-card">
+        <form action="" method="post">
+            {{ form.hidden_tag() }}
+
+            <div class="form-group">
+                <label class="form-label">{{ form.email.label }}</label>
+                {{ form.email(class="form-control", placeholder="Введите ваш email") }}
+                {% for error in form.email.errors %}
+                    <div class="alert" role="alert">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">{{ form.password.label }}</label>
+                {{ form.password(class="form-control", type="password", placeholder="Введите пароль") }}
+                {% for error in form.password.errors %}
+                    <div class="alert" role="alert">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">{{ form.password_again.label }}</label>
+                {{ form.password_again(class="form-control", type="password", placeholder="Повторите пароль") }}
+                {% for error in form.password_again.errors %}
+                    <div class="alert" role="alert">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+
+
+            <div class="form-actions">
+                {{ form.submit(class="btn-submit", value="Зарегистрироваться") }}
+            </div>
+
+            {% if message %}
+                <div class="message-success">{{ message }}</div>
+            {% endif %}
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const buttons = document.querySelectorAll('.btn-custom');
+    const selectedOptionsInput = document.getElementById('selected-options');
+
+    buttons.forEach(button => {
+        button.addEventListener('click', function () {
+            const isSelected = button.getAttribute('data-selected') === 'true';
+            button.setAttribute('data-selected', !isSelected);
+            button.classList.toggle('active', !isSelected);
+            updateSelectedOptions();
+            button.blur();
+        });
+    });
+
+    function updateSelectedOptions() {
+        const selectedOptions = Array.from(buttons)
+            .filter(button => button.getAttribute('data-selected') === 'true')
+            .map(button => button.getAttribute('data-field-id'));
+        selectedOptionsInput.value = selectedOptions.join(',');
+    }
+});
+</script>
+{% endblock %}

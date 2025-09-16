@@ -1,0 +1,364 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+:root {
+    --primary-color: #4CAF50;
+    --primary-dark: #388E3C;
+    --text-color: #FFF;
+    --button-text-color: #FFF;
+    --background-dark: rgba(0, 39, 43, 0.6);
+    --success-color: #E0FF4F;
+    --pending-color: #FFB300;
+    --card-bg: rgba(255, 255, 255, 0.05);
+    --space-black: #0A0F1F;
+    --quantum-blue: #00F0FF;
+    --cyber-purple: #7D4FFF;
+    --neon-green: #CCFF00;
+    --pure-white: #FFFFFF;
+    --grid-color: rgba(255, 255, 255, 0.05);
+    --gradient-1: linear-gradient(135deg, #00F0FF 0%, #7D4FFF 100%);
+}
+
+body {
+    font-family: 'Manrope', sans-serif;
+    background-color: var(--space-black);
+    color: var(--pure-white);
+    overflow-x: hidden;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 100px auto;
+    padding: 20px;
+}
+
+/* Заголовок страницы */
+.header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+.header h1 {
+    font-size: 3.5rem;
+    font-weight: 800;
+    background: var(--gradient-1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 10px;
+}
+.header p {
+    font-size: 1.25rem;
+    color: var(--pure-white);
+    opacity: 0.8;
+}
+.header h4 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--pure-white);
+    opacity: 0.9;
+}
+
+/* Панель кнопок для страницы достижений */
+.button-group {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 50px;
+}
+.button-group form {
+    display: inline-block;
+}
+.ach-btn {
+    padding: 10px 20px;
+    border: 1px solid var(--quantum-blue);
+    background: transparent;
+    color: var(--quantum-blue);
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 1px;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%; /* Для одинаковой ширины кнопок */
+    box-sizing: border-box;
+}
+.ach-btn:hover {
+    background: var(--quantum-blue);
+    color: var(--space-black);
+    box-shadow: 0 0 30px 5px rgba(0, 240, 255, 0.8);
+}
+
+/* Сетка карточек */
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 20px;
+}
+
+.card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 20px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    min-width: 0;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Элементы карточки */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.card-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+    word-break: break-word;
+}
+
+.points-badge {
+    background: var(--primary-color);
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.card-content {
+    display: grid;
+    gap: 10px;
+}
+
+.card-field {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.field-label {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+}
+
+.field-value {
+    font-weight: 500;
+    font-size: 14px;
+    text-align: right;
+    word-break: break-word;
+}
+
+.card-link {
+    color: var(--success-color);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.card-link:hover {
+    text-decoration: underline;
+    color: var(--primary-dark);
+}
+
+.card-image {
+    width: 100%;
+    height: 360px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-top: 15px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.status-indicator {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--pending-color);
+}
+
+.status-approved {
+    background: var(--success-color);
+}
+
+/* Адаптивность */
+@media (max-width: 1024px) {
+    .cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+        margin: 60px auto;
+    }
+
+    .header h1 {
+        font-size: 2.5rem;
+    }
+
+    .header p {
+        font-size: 1rem;
+    }
+
+    .header h4 {
+        font-size: 1.25rem;
+    }
+
+    .button-group {
+        flex-direction: column; /* Кнопки в столбец на мобильных */
+        gap: 10px; /* Уменьшаем расстояние между кнопками */
+        margin-bottom: 30px;
+    }
+
+    .ach-btn {
+        width: 100%; /* Полная ширина для кнопок */
+        padding: 12px 15px; /* Увеличиваем внутренние отступы для удобства нажатия */
+        font-size: 0.9rem; /* Уменьшаем шрифт для компактности */
+    }
+
+    .cards-grid {
+        grid-template-columns: 1fr;
+        padding: 10px;
+        gap: 15px;
+    }
+
+    .card {
+        padding: 15px;
+    }
+
+    .card-title {
+        font-size: 16px;
+    }
+
+    .points-badge {
+        font-size: 12px;
+        padding: 5px 10px;
+    }
+
+    .field-label,
+    .field-value {
+        font-size: 13px;
+    }
+
+    .card-image {
+        height: 300px; /* Уменьшаем высоту изображения для мобильных */
+    }
+}
+
+@media (max-width: 480px) {
+    .header h1 {
+        font-size: 2rem;
+    }
+
+    .header p {
+        font-size: 0.9rem;
+    }
+
+    .header h4 {
+        font-size: 1rem;
+    }
+
+    .ach-btn {
+        font-size: 0.85rem;
+        padding: 10px 12px;
+    }
+
+    .card-image {
+        height: 250px; /* Ещё меньше для очень маленьких экранов */
+    }
+}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<div class="container">
+    <div class="header">
+        <h1>Достижения</h1>
+        <p>Ваш путь к успеху начинается здесь. Каждое достижение – это шаг к новым вершинам!</p>
+    </div>
+
+    <div class="button-group">
+        <form method="post">
+            <button class="ach-btn" name="Добавить">Добавить достижение</button>
+        </form>
+        <form method="post">
+            <button class="ach-btn" name="Проверенные">Проверенные</button>
+        </form>
+        <form method="post">
+            <button class="ach-btn" name="На_рассмотрении">На рассмотрении</button>
+        </form>
+        <form method="post">
+            <button class="ach-btn" name="Отклоненные_достижения">Отклоненные достижения</button>
+        </form>
+    </div>
+
+    <div class="header">
+        <h4>{{ message }}</h4>
+    </div>
+
+    <div class="cards-grid">
+        {% for error in db %}
+        <div class="card">
+            <div class="card-header">
+                {% if error.prichina %}
+                <span class="points-badge">{{ error.prichina }}</span>
+
+                {% else %}
+                <h3 class="card-title">{{ error.title }}</h3>
+                <span class="points-badge">{{ error.points }} баллов</span>
+                {% endif %}
+            </div>
+            <div class="card-content">
+                {% if error.prichina %}
+                <div class="card-field">
+                    <span class="field-label">Название</span>
+                    <span class="field-value">{{ error.title }}</span>
+                </div>
+                {% endif %}
+                <div class="card-field">
+                    <span class="field-label">Уровень:</span>
+                    <span class="field-value">{{ error.yroven }}</span>
+                </div>
+                <div class="card-field">
+                    <span class="field-label">Результат:</span>
+                    <span class="field-value">{{ error.result }}</span>
+                </div>
+                <div class="card-field">
+                    <span class="field-label">Тип:</span>
+                    <span class="field-value">{{ error.type }}</span>
+                </div>
+                <div class="card-field">
+                    <span class="field-label">Год:</span>
+                    <span class="field-value">{{ error.year }}</span>
+                </div>
+                <div class="card-field">
+                    <span class="field-label">Ссылка:</span>
+                    <a href="{{ error.ssilka }}" target="_blank" class="card-link">Перейти</a>
+                </div>
+            </div>
+            <img src="static/photos/{{ error.photo }}" class="card-image" alt="Фото удалено с сервера!">
+            <div class="status-indicator {% if error.status == 'approved' %}status-approved{% endif %}"></div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

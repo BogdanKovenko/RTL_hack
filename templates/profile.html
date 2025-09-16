@@ -1,0 +1,450 @@
+{% extends "base.html" %}
+
+{% block content %}
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css">
+    <style>
+        :root {
+            --space-black: #0A0F1F;
+            --quantum-blue: #00F0FF;
+            --cyber-purple: #7D4FFF;
+            --neon-green: #CCFF00;
+            --pure-white: #FFFFFF;
+            --card-bg: rgba(16, 18, 33, 0.7);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --gradient-1: linear-gradient(135deg, #00F0FF 0%, #7D4FFF 100%);
+        }
+
+        .profile-container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: linear-gradient(145deg, #0A0F1F 0%, #0A1F2F 100%);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            border: 1px solid rgba(125, 79, 255, 0.2);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .profile-container.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Header */
+        .profile-header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .profile-title {
+            font-size: 2rem;
+            font-weight: 700;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.6s ease;
+        }
+
+        .profile-title.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .profile-header {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease 0.2s;
+        }
+
+        .profile-header.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .avatar-wrapper {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            transition: all 0.4s ease;
+        }
+
+        .avatar-wrapper:hover {
+            transform: scale(1.05) rotate(5deg);
+        }
+
+        .avatar-status {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--cyber-purple);
+            border: 2px solid #1e3b3b;
+            box-shadow: 0 0 10px var(--cyber-purple);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .user-meta {
+            flex: 1;
+        }
+
+        .user-name {
+            font-size: 2rem;
+            margin: 0;
+            color: var(--neon-green);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-class {
+            background: rgba(125, 79, 255, 0.15);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: var(--cyber-purple);
+            transition: all 0.3s ease;
+        }
+
+        .user-class:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(125, 79, 255, 0.3);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .stat-card {
+            background: var(--space-black);
+            padding: 1.5rem;
+            min-height: 130px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            transition: all 0.4s ease;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .stat-card.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px) !important;
+            border-color: var(--quantum-blue);
+            box-shadow: 0 10px 20px rgba(0, 240, 255, 0.1);
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            color: var(--neon-green);
+            margin: 0.5rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover .stat-value {
+            transform: scale(1.1);
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            color: var(--quantum-blue);
+        }
+
+        .profile-details {
+            display: grid;
+            gap: 1.5rem;
+            grid-template-columns: 2fr 1fr;
+        }
+
+        .detail-section {
+            background: var(--space-black);
+            padding: 1.5rem;
+            min-height: 180px;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            transition: all 0.4s ease;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .detail-section.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .detail-section:hover {
+            transform: translateY(-5px) !important;
+            border-color: var(--quantum-blue);
+            box-shadow: 0 10px 20px rgba(0, 240, 255, 0.1);
+        }
+
+        .detail-section h3 {
+            color: var(--neon-green);
+            margin-top: 0;
+            font-size: 1.5rem;
+        }
+
+        .detail-section p,
+        .detail-section .contact-info {
+            color: var(--quantum-blue);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-direction: column;
+        }
+
+        .btn-edit {
+            background: rgba(0, 240, 255, 0.1);
+            color: var(--quantum-blue) !important;
+            border: 1px solid var(--quantum-blue) !important;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: 'Manrope', sans-serif;
+            font-weight: 500;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        .btn-edit.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .btn-edit:hover {
+            background: rgba(0, 240, 255, 0.2) !important;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+            transform: translateY(-2px) !important;
+        }
+
+        .social-links a {
+            color: var(--quantum-blue);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 8px 0;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            color: var(--neon-green);
+            transform: translateX(5px);
+        }
+
+        @media (max-width: 768px) {
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .profile-details {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+
+            .stat-card,
+            .detail-section {
+                min-height: auto;
+                padding: 1.5rem;
+            }
+        }
+
+        /* Анимации появления */
+        .delay-1 { transition-delay: 0.1s !important; }
+        .delay-2 { transition-delay: 0.2s !important; }
+        .delay-3 { transition-delay: 0.3s !important; }
+        .delay-4 { transition-delay: 0.4s !important; }
+        .delay-5 { transition-delay: 0.5s !important; }
+    </style>
+</head>
+
+<div class="profile-container" id="profileContainer">
+    <!-- Profile Header -->
+    <div class="profile-header-container" align="center">
+        <h1 class="profile-title" id="profileTitle">Профиль</h1>
+    </div>
+
+    <div class="profile-header" id="profileHeader">
+        <div class="avatar-wrapper">
+            <img src="static/icons/{{data.icon}}"
+                 style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover;">
+            <div class="avatar-status"></div>
+        </div>
+
+        <div class="user-meta">
+            <h1 class="user-name">
+                {{ data.name }}
+                {% if data.class1 %}
+                    <span class="user-class">{{ data.class1 }}</span>
+                {% endif %}
+            </h1>
+
+            {% if data.profil %}
+                <p class="text-muted" style="margin: 1rem 0;">
+                    {{ data.profil }}
+                </p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card" id="statCard1">
+            <div class="stat-label">Баллы</div>
+            <div class="stat-value">{{ data.pointss }}</div>
+        </div>
+
+        <div class="stat-card" id="statCard2">
+            <div class="stat-label">Аккаунт создан</div>
+            <div class="stat-value">
+                {{ data.created_date.strftime('%d.%m.%Y') }}
+            </div>
+        </div>
+    </div>
+
+    <div class="profile-details">
+        <div class="detail-section" id="detailSection1">
+            <h3>Контактная информация</h3>
+            <div class="contact-info">
+                <p>
+                    <strong>Email:</strong> {{ data.email }}
+                </p>
+            </div>
+        </div>
+
+        <div class="detail-section" id="detailSection2">
+            <h3>Действия</h3>
+            <form method="post" class="action-buttons">
+                <button class="btn-edit delay-1" name="action" value="change_avatar">
+                    Сменить аватар
+                </button>
+                <button class="btn-edit delay-2" name="action" value="change_profile">
+                    Редактировать профиль
+                </button>
+                <button class="btn-edit delay-3" name="action" value="change_profile">
+                    <a href="mailto:dnevnik_dostizheniy@mail.ru" style="color: var(--quantum-blue); text-decoration: none;">Обратиться в поддержку</a>
+                </button>
+                <div align="center">
+                    <h6 style="color: white;">dnevnik_dostizheniy@mail.ru</h6>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Анимация появления контейнера
+        setTimeout(() => {
+            document.getElementById('profileContainer').classList.add('show');
+
+            // Анимация заголовка
+            setTimeout(() => {
+                document.getElementById('profileTitle').classList.add('show');
+
+                // Анимация шапки профиля
+                setTimeout(() => {
+                    document.getElementById('profileHeader').classList.add('show');
+
+                    // Анимация карточек статистики
+                    setTimeout(() => {
+                        document.getElementById('statCard1').classList.add('show');
+
+                        setTimeout(() => {
+                            document.getElementById('statCard2').classList.add('show');
+
+                            // Анимация секций деталей
+                            setTimeout(() => {
+                                document.getElementById('detailSection1').classList.add('show');
+
+                                setTimeout(() => {
+                                    document.getElementById('detailSection2').classList.add('show');
+
+                                    // Анимация кнопок
+                                    const buttons = document.querySelectorAll('.btn-edit');
+                                    buttons.forEach((btn, index) => {
+                                        setTimeout(() => {
+                                            btn.classList.add('show');
+                                        }, index * 100);
+                                    });
+                                }, 200);
+                            }, 200);
+                        }, 200);
+                    }, 300);
+                }, 300);
+            }, 200);
+        }, 100);
+
+        // 3D эффект при наведении для карточек
+        const cards = document.querySelectorAll('.stat-card, .detail-section');
+        cards.forEach(card => {
+            card.addEventListener('mousemove', function(e) {
+                const rect = this.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const angleX = (y - centerY) / 20;
+                const angleY = (centerX - x) / 20;
+
+                this.style.transform = `perspective(1000px) rotateX(${angleX}deg) rotateY(${angleY}deg) translateY(-5px)`;
+                this.style.boxShadow = '0 15px 30px rgba(0, 240, 255, 0.15)';
+            });
+
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
+                this.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.1)';
+            });
+        });
+
+        // Пульсация статуса аватара
+        const avatarStatus = document.querySelector('.avatar-status');
+        setInterval(() => {
+            avatarStatus.style.boxShadow = `0 0 ${Math.random() * 10 + 5}px var(--cyber-purple)`;
+        }, 2000);
+    });
+</script>
+{% endblock %}

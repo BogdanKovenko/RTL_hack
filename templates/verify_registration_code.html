@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="forum-container">
+    <div class="forum-header">
+        <h1 class="forum-title">Проверка кода</h1>
+    </div>
+
+    <div class="form-card">
+        <div class="email-note">Код был отправлен на {{ email }}</div>
+
+        {# ОБЯЗАТЕЛЬНО: передаём email в action, иначе POST потеряет query-параметр #}
+        <form method="post" action="{{ url_for('verify_registration_code', email=email) }}">
+            {{ form.hidden_tag() }}
+
+            <div class="form-group">
+                <label class="form-label">{{ form.code.label }}</label>
+                {{ form.code(class="form-control", placeholder="Введите код") }}
+                {% for error in form.code.errors %}
+                    <div class="alert" role="alert">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="form-actions">
+                {{ form.submit(class="btn-submit", value="Подтвердить") }}
+            </div>
+
+            {% if message %}
+                <div class="message-success">{{ message }}</div>
+            {% endif %}
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{# Стили лучше хранить в base.css, но оставлю здесь, чтобы было самодостаточно #}
+{% block extra_css %}
+<style>
+:root {
+    --space-black: #0A0F1F;
+    --quantum-blue: #00F0FF;
+    --cyber-purple: #7D4FFF;
+    --pure-white: #FFFFFF;
+    --card-bg: rgba(16, 18, 33, 0.7);
+    --border-color: rgba(255, 255, 255, 0.1);
+    --gradient-1: linear-gradient(135deg, #00F0FF 0%, #7D4FFF 100%);
+}
+
+.forum-container {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.forum-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.forum-title {
+    font-size: 2rem;
+    font-weight: 700;
+    background: var(--gradient-1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0;
+}
+
+.form-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 2rem 3rem;
+    margin-bottom: 1rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.form-group { position: relative; margin-bottom: 25px; }
+
+.form-control {
+    width: 100%;
+    padding: 12px 20px;
+    font-size: 16px;
+    color: var(--pure-white);
+    background: rgba(10, 15, 31, 0.5);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    outline: none;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    font-family: 'Manrope', sans-serif;
+}
+
+.form-control:focus {
+    border-color: var(--quantum-blue);
+    box-shadow: 0 0 0 3px rgba(0, 240, 255, 0.2);
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--pure-white);
+    font-size: 15px;
+}
+
+.btn-submit {
+    background: var(--gradient-1);
+    color: white;
+    border: none;
+    padding: 12px 40px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 16px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 6px 15px rgba(125,79,255,0.3);
+    transition: all 0.2s ease;
+    cursor: pointer;
+    font-family: 'Manrope', sans-serif;
+}
+
+.btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(125,79,255,0.4); }
+
+.form-actions { display: flex; justify-content: center; margin-top: 30px; }
+
+.alert {
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin-top: 10px;
+    font-size: 14px;
+    background: rgba(243, 156, 18, 0.15);
+    color: #f39c12;
+    border: 1px solid rgba(243, 156, 18, 0.3);
+    font-family: 'Manrope', sans-serif;
+}
+
+.message-success {
+    background: rgba(46, 204, 113, 0.15);
+    color: #2ecc71;
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin-top: 20px;
+    font-size: 14px;
+    border: 1px solid rgba(46, 204, 113, 0.3);
+    text-align: center;
+}
+
+.email-note { text-align: center; font-size: 14px; color: var(--pure-white); margin-bottom: 20px; opacity: .9; }
+
+@media (max-width: 768px) {
+    .forum-container { padding: 20px 15px; max-width: 100%; }
+    .form-card { padding: 20px; }
+}
+</style>
+{% endblock %}

@@ -1,0 +1,610 @@
+<!doctype html>
+<html lang="ru" data-theme="dark">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>RLT.Tender_Guide (КОРП) — Чат</title>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root{
+      --bg:#0B0F19; --panel:#101426; --card:#11172B;
+      --muted:#A9B1C6; --text:#E8ECF3; --border:rgba(255,255,255,.09);
+      --hl:#00F0FF; --ok:#19C37D; --warn:#FFC761; --bad:#FF6464;
+      --chip:rgba(255,255,255,.08); --shadow:0 8px 30px rgba(0,0,0,.35); --radius:14px; --maxw:780px;
+      --ease:cubic-bezier(.22,.61,.36,1);
+    }
+    *{box-sizing:border-box} html,body{height:100%}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:'Manrope',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+
+    /* NAV */
+    .nav{position:fixed;top:0;left:0;right:0;z-index:20;display:flex;justify-content:center;background:rgba(10,14,28,.6);backdrop-filter:saturate(120%) blur(8px);border-bottom:1px solid var(--border)}
+    .nav-inner{width:100%;max-width:calc(var(--maxw) + 2*16px);padding:10px 16px;display:flex;align-items:center;gap:8px}
+    .nav-title{font-weight:700}
+    .nav-spacer{flex:1}
+    .btn{appearance:none;border:1px solid var(--border);background:transparent;color:var(--text);padding:8px 12px;border-radius:10px;font-weight:600;cursor:pointer;transition:transform .15s var(--ease),box-shadow .2s var(--ease),border-color .2s}
+    .btn:hover{border-color:rgba(255,255,255,.18);transform:translateY(-1px)}
+    .btn.primary{border-color:rgba(0,240,255,.5);color:var(--hl)}
+    .btn.ghost{border-color:transparent;color:var(--muted)}
+    .btn.chip{background:var(--chip);border-color:transparent}
+    .btn.icon{display:inline-flex;align-items:center;gap:8px}
+    .btn.round{border-radius:999px}
+    .btn.disabled{opacity:.5;pointer-events:none}
+    .muted{color:var(--muted)}
+
+    main{padding-top:58px}
+    .wrap{display:flex;justify-content:center;padding:16px}
+    .col{width:100%;max-width:var(--maxw);display:flex;flex-direction:column;min-height:calc(100vh - 58px)}
+    .messages{flex:1;overflow:auto;padding:8px 0 16px;scroll-behavior:smooth}
+
+    /* MSG */
+    @keyframes msgIn{from{transform:translateY(6px);opacity:0}to{transform:none;opacity:1}}
+    .msg{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin:10px 0;box-shadow:var(--shadow);animation:msgIn .18s var(--ease)}
+    .msg.user{border-color:rgba(0,240,255,.28)}
+    .msg.operator{border-color:rgba(255,199,97,.35)}
+    .meta{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:8px;margin-bottom:6px}
+    .content{line-height:1.62}
+    .content p{margin:.6em 0}
+    .content code{background:rgba(255,255,255,.06);padding:.15em .35em;border-radius:6px}
+    .content pre{background:#0b0f1a;border:1px solid var(--border);padding:12px;border-radius:10px;overflow:auto}
+    .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;align-items:center}
+    .toolbar .btn{font-size:12px;padding:6px 10px}
+    .rate-badge{font-size:12px;padding:4px 8px;border-radius:999px;background:var(--chip);color:var(--muted)}
+    .sources{margin-top:10px;border-top:1px dashed var(--border);padding-top:8px}
+    .sources a{color:var(--hl);text-decoration:underline}
+    .badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:4px 8px;border-radius:999px;background:var(--chip);color:var(--muted)}
+    .clamped{max-height:260px;overflow:hidden;position:relative}
+    .clamped::after{content:"";position:absolute;left:0;right:0;bottom:0;height:80px;background:linear-gradient(to bottom,transparent,var(--card))}
+
+    /* COMPOSER */
+    .composer{position:sticky;bottom:0;margin:10px 0 12px;border:1px solid var(--border);border-radius:16px;background:var(--panel);box-shadow:var(--shadow);padding:10px}
+    .composer-top{display:flex;justify-content:space-between;align-items:center;margin:0 6px 6px}
+    .composer-top .model{font-size:12px;color:var(--muted)}
+    .composer-body{display:flex;align-items:flex-end;gap:8px}
+    .composer textarea{flex:1;resize:none;min-height:24px;max-height:160px;padding:10px 12px;background:transparent;border:none;color:var(--text);outline:none;font:inherit}
+    .send{padding:10px 14px;border:1px solid rgba(0,240,255,.5);color:var(--hl);border-radius:12px;background:transparent;font-weight:700;transition:box-shadow .2s var(--ease),transform .15s var(--ease)}
+    .send:hover{box-shadow:0 0 18px rgba(0,240,255,.35);transform:translateY(-1px)}
+    .suggests{margin:8px 6px 0}
+    .suggests .btn{margin-right:6px;margin-bottom:6px}
+
+    /* OVERLAY + OFFCANVAS */
+    .overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);backdrop-filter:blur(2px);opacity:0;visibility:hidden;transition:opacity .2s var(--ease),visibility .2s;z-index:19}
+    .overlay.show{opacity:1;visibility:visible}
+    .offc{position:fixed;top:0;bottom:0;width:360px;background:var(--panel);border-left:1px solid var(--border);transform:translateX(100%);transition:transform .22s var(--ease);z-index:20;box-shadow:var(--shadow);display:none}
+    .offc.show{transform:translateX(0)}
+    .offc.left{left:0;border-left:none;border-right:1px solid var(--border);transform:translateX(-100%)}
+    .offc.left.show{transform:translateX(0)}
+    .offh{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--border)}
+    .offb{padding:12px;height:calc(100% - 54px);overflow:auto}
+    .hist-item{padding:10px 12px;border-radius:12px;border:1px solid var(--border);background:rgba(255,255,255,.02);margin-bottom:8px;cursor:pointer;transition:border-color .2s,background .2s}
+    .hist-item:hover{border-color:rgba(255,255,255,.18);background:rgba(255,255,255,.04)}
+    .hist-item.active{border-color:rgba(0,240,255,.45);background:rgba(0,240,255,.06)}
+    .kpi{display:flex;align-items:center;justify-content:space-between;border:1px solid var(--border);border-radius:12px;padding:8px 10px;margin-bottom:8px}
+    .chip{display:inline-flex;align-items:center;padding:6px 9px;border-radius:999px;background:var(--chip);color:var(--muted);margin:0 6px 6px 0;font-size:12px}
+    .toggle{display:flex;align-items:center;gap:12px}
+    .hidden{display:none}
+    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
+
+    @media (max-width:992px){.offc{width:100%}}
+    @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+    /* BANNERS */
+    .banner{border:1px solid var(--border);border-radius:12px;padding:10px;margin:8px 0;background:rgba(255,255,255,.03);text-align:center}
+    .banner.bad{border-color:rgba(255,100,100,.35)}
+    .banner.operator{background:rgba(0,240,255,.08);border-color:rgba(0,240,255,.4);color:var(--hl);font-weight:800}
+
+    /* Topic banner */
+    .banner.topic{display:flex;align-items:center;gap:8px;justify-content:flex-start}
+    .banner.topic .label{opacity:.8}
+    .banner.topic .title{font-weight:800}
+  </style>
+</head>
+
+<body data-user="{{ current_user.email if current_user.is_authenticated else '' }}">
+  <div class="nav">
+    <div class="nav-inner">
+      <button class="btn ghost icon" id="openHistory">☰ История</button>
+      <div class="nav-title">RLT.Tender_Guide — Чат</div>
+      <div class="nav-spacer"></div>
+
+      <span id="authMini" class="muted">Гость</span>
+      <a class="btn chip" id="btnLogin" href="/login">Войти</a>
+      <a class="btn chip" id="btnRegister" href="/register">Регистрация</a>
+      <a class="btn chip hidden" id="btnLogout" href="/logout">Выйти</a>
+
+      <button class="btn icon" id="openDetails">Детали ▸</button>
+    </div>
+  </div>
+
+  <div id="overlay" class="overlay" aria-hidden="true"></div>
+
+  <!-- История -->
+  <aside id="history" class="offc left" aria-hidden="true" style="display:none">
+    <div class="offh">
+      <strong>История</strong>
+      <button class="btn chip" data-close="#history">Закрыть</button>
+    </div>
+    <div class="offb">
+      <button class="btn primary w-100" id="newSessionBtn">Новая сессия</button>
+      <div id="historyList" class="mt-2"></div>
+    </div>
+  </aside>
+
+  <!-- Детали -->
+  <aside id="details" class="offc" aria-hidden="true" style="display:none">
+    <div class="offh">
+      <strong>Детали</strong>
+      <button class="btn chip" data-close="#details">Закрыть</button>
+    </div>
+    <div class="offb">
+      <div class="toggle mb-2">
+        <div><strong>Только КОРП</strong></div>
+        <label><input id="scopeSwitch" type="checkbox" checked></label>
+        <span id="scopeState" class="muted">вкл.</span>
+      </div>
+
+      <div class="mb-2">
+        <small class="muted d-block mb-1">Сводка темы</small>
+        <div id="topicSummary">—</div>
+        <div id="topicKeywords" class="mt-2"></div>
+      </div>
+
+      <div class="mb-2">
+        <small class="muted d-block mb-1">Лог поиска</small>
+        <div id="searchLog"></div>
+      </div>
+
+      <div class="mb-2">
+        <small class="muted d-block mb-1">Оценки (текущая сессия)</small>
+        <div class="kpi"><span>Средняя</span><span id="avgRating">★ 0.0</span></div>
+        <div class="kpi"><span>Последняя</span><span id="lastRating">—</span></div>
+      </div>
+    </div>
+  </aside>
+
+  <main>
+    <div class="wrap">
+      <div class="col">
+        <div id="bannerOutOfScope" class="banner hidden">Вопрос вне секции КОРП. Переформулируйте или выключите фильтр «Только КОРП».</div>
+        <div id="bannerError" class="banner bad hidden">Ошибка запроса. Попробуйте позже.</div>
+
+        <div id="operatorBanner" class="banner operator hidden">💬 Вы общаетесь с оператором</div>
+
+        <!-- Текущая тема -->
+        <div id="topicBar" class="banner topic">
+          <span class="label">Тема:</span>
+          <span id="topicTitleText" class="title">—</span>
+        </div>
+
+        <div id="messages" class="messages"></div>
+
+        <div class="composer" role="group" aria-label="Сообщение">
+          <div class="composer-top">
+            <div class="model">Режим: <span id="modeLabel" class="mono">КОРП</span></div>
+            <div class="muted">Enter — отправить • Shift+Enter — перенос</div>
+          </div>
+          <div class="composer-body">
+            <textarea id="input" placeholder="Спросите про КОРП или 223-ФЗ…" rows="1"></textarea>
+            <button class="send" id="sendBtn">Отправить</button>
+          </div>
+          <div class="suggests">
+            <button class="btn chip" data-suggest="Как подать запрос на разъяснение в КОРП?">Разъяснение</button>
+            <button class="btn chip" data-suggest="Почему не подписывается заявка ЭП?">Подпись ЭП</button>
+            <button class="btn chip" data-suggest="Где найти регламент по КОРП?">Регламент</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    /* ========= USER / STORE ========= */
+    function getDOMUser(){ const u = document.body.dataset.user || ''; return u.trim() || null; }
+    function storeKey(){ const u = getDOMUser(); return u ? `chatstore:user:${u}` : `chatstore:anon`; }
+    function loadStore(){ try{ const raw = localStorage.getItem(storeKey()); return raw? JSON.parse(raw) : null; } catch{ return null; } }
+    function saveStore(payload){ localStorage.setItem(storeKey(), JSON.stringify(payload)); }
+    function defaultStore(){
+      const id='s'+Math.random().toString(36).slice(2,7);
+      return {
+        sessions:[ {id, title:'Добро пожаловать', avg:0} ],
+        messages:{ [id]:[ {role:'assistant', id:`seed_${id}_a1`, text:"Привет! Я помогу по **КОРП** и **223-ФЗ**. Задайте вопрос 👇", time:ts()} ] },
+        topic:{ [id]:{summary:'Стартовая сессия', keywords:['КОРП','223-ФЗ','Интерфейс']} },
+        searchLog:[{label:'Найдено документов',value:'24'},{label:'Регламенты',value:'8'},{label:'User Guides',value:'139'}]
+      };
+    }
+
+    const STATE = { onlyKorp:true, currentSessionId:null, lastRating:null };
+
+    /* ========= LIGHT MARKDOWN ========= */
+    function mdEscape(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+    function mdRender(text){
+      let html = mdEscape(text)
+        .replace(/^### (.*)$/gm,'<h3>$1</h3>').replace(/^## (.*)$/gm,'<h2>$1</h2>').replace(/^# (.*)$/gm,'<h1>$1</h1>')
+        .replace(/```([\s\S]*?)```/g,(_,code)=>`<pre><code>${code.replace(/&lt;/g,'<').replace(/&gt;/g,'>')}</code></pre>`)
+        .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\*(.+?)\*/g,'<em>$1</em>')
+        .replace(/^> (.*)$/gm,'<blockquote>$1</blockquote>').replace(/\n{2,}/g,'</p><p>').replace(/\n/g,'<br/>');
+      return `<p>${html}</p>`;
+    }
+
+    /* ========= RATINGS ========= */
+    function getRatingsMap(){ try{ return JSON.parse(localStorage.getItem('ratedAnswersV2')||'{}'); } catch{ return {}; } }
+    function setRatingsMap(map){ localStorage.setItem('ratedAnswersV2', JSON.stringify(map)); }
+    function getAnswerRating(answerId){ const map=getRatingsMap(); return map[answerId]? map[answerId].score : null; }
+    function hasRated(answerId){ return getAnswerRating(answerId)!==null; }
+    function markRated(answerId, sessionId, score){
+      const map = getRatingsMap(); map[answerId] = {score, sessionId}; setRatingsMap(map);
+      STATE.lastRating = score; recomputeSessionAverage(sessionId); renderDetails(); renderHistory();
+    }
+    function recomputeSessionAverage(sessionId){
+      const map = getRatingsMap();
+      const entries = Object.values(map).filter(x=>x.sessionId===sessionId);
+      const avg = entries.length ? (entries.reduce((a,b)=>a+b.score,0)/entries.length) : 0;
+      const store = loadStore(); const idx = store.sessions.findIndex(s=>s.id===sessionId);
+      if(idx>-1){ store.sessions[idx].avg = avg; saveStore(store); }
+    }
+    function getSessionAverage(sessionId){
+      const store = loadStore(); const idx = store.sessions.findIndex(s=>s.id===sessionId);
+      return idx>-1 ? (store.sessions[idx].avg||0) : 0;
+    }
+
+    /* ========= MESSAGE RENDER ========= */
+    const $msgs = document.getElementById('messages');
+
+    function messageTemplate({role='assistant', html='', meta='', sources=[], id=''}) {
+      const clampClass = html.length > 1500 ? 'clamped' : '';
+      const srcHtml = (sources||[]).slice(0,3).map(s=>`— <a href="${s.url||'#'}${s.anchor||''}" target="_blank">${s.title||'Источник'}</a>`).join('<br/>');
+      const already = id && hasRated(id);
+      const myScore = already ? getAnswerRating(id) : null;
+      const myBadge = already ? `<span class="rate-badge">Оценено: ★ ${myScore}</span>` : '';
+      const toolbar = role==='assistant' ? `
+        <div class="toolbar">
+          <span class="badge">Ответ • ${STATE.onlyKorp ? 'КОРП' : 'Широкий'}</span>
+          ${myBadge}
+          <button class="btn chip" onclick="copyMsg(this)">Копировать</button>
+          <button class="btn chip rate-btn ${already?'disabled':''}" data-id="${id}" data-score="5" data-session="${STATE.currentSessionId}">👍</button>
+          <button class="btn chip rate-btn ${already?'disabled':''}" data-id="${id}" data-score="1" data-session="${STATE.currentSessionId}">👎</button>
+          <button class="btn chip" onclick="handover()">К оператору</button>
+          ${html.length>1500?`<button class="btn chip" onclick="toggleClamp(this)">${clampClass?'Развернуть':'Свернуть'}</button>`:''}
+        </div>` : '';
+      const srcBlock = sources && sources.length ? `<div class="sources mt-1"><small class="muted d-block mb-1">Источники:</small>${srcHtml}</div>` : '';
+      return `
+        <div class="msg ${role}" ${id?`data-answer-id="${id}"`:''}>
+          <div class="meta">${meta}</div>
+          <div class="content ${clampClass}">${html}</div>
+          ${srcBlock}
+          ${toolbar}
+        </div>`;
+    }
+
+    function renderMessages(sessionId){
+      const store = loadStore();
+      const sess = (store.sessions||[]).find(s=>s.id===sessionId);
+      const isOp = sess && sess.title.toLowerCase() === 'чат с оператором';
+      document.getElementById('operatorBanner').classList.toggle('hidden', !isOp);
+
+      $msgs.innerHTML='';
+      const arr = (store.messages[sessionId]||[]);
+      arr.forEach(m=>{
+        const metaRole = m.role==='user'?'Пользователь':(m.role==='operator'?'Оператор':'Ассистент');
+        $msgs.insertAdjacentHTML('beforeend', messageTemplate({
+          role:m.role, meta:`${metaRole} • ${m.time||ts()}`, html: mdRender(m.text), id:m.id
+        }));
+      });
+      attachRateHandlers(); scrollToBottom();
+    }
+
+    function renderDetails(){
+      document.getElementById('scopeSwitch').checked = STATE.onlyKorp;
+      document.getElementById('scopeState').textContent = STATE.onlyKorp ? 'вкл.' : 'выкл.';
+      const store = loadStore();
+      const t = (store.topic||{})[STATE.currentSessionId] || {};
+      document.getElementById('topicSummary').textContent = t.summary || '—';
+      document.getElementById('topicKeywords').innerHTML = (t.keywords||[]).map(k=>`<span class="chip">${k}</span>`).join('');
+      document.getElementById('searchLog').innerHTML = (store.searchLog||[]).map(k=>`<div class="kpi"><span>${k.label}</span><span class="mono">${k.value}</span></div>`).join('');
+      const avg = getSessionAverage(STATE.currentSessionId);
+      document.getElementById('avgRating').textContent = `★ ${avg.toFixed(1)}`;
+      document.getElementById('lastRating').textContent = STATE.lastRating ? `★ ${STATE.lastRating}` : '—';
+
+      const user = getDOMUser();
+      document.getElementById('authMini').textContent = user ? `👤 ${user}` : 'Гость';
+      document.getElementById('btnLogin').classList.toggle('hidden', !!user);
+      document.getElementById('btnRegister').classList.toggle('hidden', !!user);
+      document.getElementById('btnLogout').classList.toggle('hidden', !user);
+    }
+
+    function renderHistory(){
+      const box = document.getElementById('historyList');
+      const store = loadStore();
+      box.innerHTML = (store.sessions||[]).map(s=>{
+        const active = s.id===STATE.currentSessionId ? 'active' : '';
+        const avg = (s.avg||0).toFixed(1);
+        return `<div class="hist-item ${active}" data-id="${s.id}">
+          <div style="display:flex;justify-content:space-between;gap:12px;">
+            <div class="text-truncate">${s.title}</div>
+            <div class="mono">★ ${avg}</div>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    /* ========= TOPIC TITLE (first sentence) ========= */
+    function extractFirstSentence(text){
+      if(!text) return null;
+      // убрать кодовые блоки и лишние маркеры, сжать пробелы
+      let cleaned = String(text)
+        .replace(/```[\s\S]*?```/g,' ')
+        .replace(/[*_`>#]/g,' ')
+        .replace(/^\s*[-•]\s*/,'')
+        .replace(/\s+/g,' ')
+        .trim();
+      // попытаться взять 1-е законченное предложение
+      let m = cleaned.match(/^(.+?[\.!\?])(\s|$)/);
+      if(!m){ m = cleaned.match(/^(.+?)(?:\n|$)/); }
+      let sent = (m ? m[1] : cleaned).trim();
+      // обрезать кавычки по краям
+      sent = sent.replace(/^[«"“„]+/,'').replace(/[»"”]+$/,'').trim();
+      // ограничить длину
+      if(sent.length > 120) sent = sent.slice(0,117) + '…';
+      return sent || null;
+    }
+    function isDefaultTitle(t){
+      if(!t) return true;
+      return /^нов(ая|ый)\s+сессия$/i.test(t.trim()) || /^добро пожаловать$/i.test(t.trim());
+    }
+    function setSessionTitle(sessionId, title){
+      if(!sessionId || !title) return;
+      const store = loadStore(); if(!store) return;
+      const i = (store.sessions||[]).findIndex(s=>s.id===sessionId);
+      if(i<0) return;
+      store.sessions[i].title = title;
+      saveStore(store);
+      renderHistory(); renderTopicTitle();
+    }
+    function renderTopicTitle(){
+      const el = document.getElementById('topicTitleText');
+      const store = loadStore(); if(!store){ el.textContent='—'; return; }
+      const sess = (store.sessions||[]).find(s=>s.id===STATE.currentSessionId);
+      el.textContent = (sess && sess.title) ? sess.title : '—';
+    }
+
+    function scrollToBottom(){ const $m=document.getElementById('messages'); $m.scrollTop=$m.scrollHeight; }
+
+    /* ========= РЕАЛЬНЫЙ ВЫЗОВ МОДЕЛИ ========= */
+    async function apiAsk(text){
+      const body = {
+        question: text,
+        category: document.getElementById('scopeSwitch').checked ? "regs" : "general",
+        deterministic: true,
+        max_new_tokens: 256,
+        min_new_tokens: 64
+      };
+      const res = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json' },
+        body: JSON.stringify(body)
+      });
+      const js = await res.json();
+      if(!js.ok) throw new Error(js.error || 'LLM error');
+      return {
+        content: js.text,
+        sources: [],
+        id: 'ans_'+Math.random().toString(36).slice(2,10)
+      };
+    }
+
+    /* ========= PERSIST ========= */
+    async function persistToServer(role, text){
+      try{
+        await fetch('/api/chat/send', {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ role, text })
+        });
+      }catch(e){}
+    }
+
+    /* ========= OPERATOR ========= */
+    async function handover(){
+      const store = loadStore();
+      const list = (store.messages[STATE.currentSessionId]||[]);
+      const lastUser = [...list].reverse().find(m=>m.role==='user');
+      const text = lastUser ? lastUser.text : 'Нужна помощь оператора.';
+
+      const opId = ensureOperatorSession();
+      STATE.currentSessionId = opId;
+      renderHistory(); renderDetails(); renderMessages(opId); renderTopicTitle();
+
+      pushMessage(opId, {role:'user', text, time:ts()});
+      pushMessage(opId, {role:'assistant', text:"Сообщение передано оператору. Ожидайте ответа.", time:ts(), id:'sys_'+Math.random().toString(36).slice(2,8)});
+      persistToServer('operator', text);
+
+      closeCanvas('#details');
+      openCanvas('#history');
+    }
+
+    function ensureOperatorSession(){
+      const store = loadStore();
+      let sess = (store.sessions||[]).find(s=>s.title.toLowerCase()==='чат с оператором');
+      if(!sess){
+        const id = 'op_'+Math.random().toString(36).slice(2,7);
+        sess = {id, title:'Чат с оператором', avg:0};
+        store.sessions.unshift(sess);
+        store.messages[id] = [{role:'assistant', id:`seed_${id}_a1`, text:"Соединяем с оператором…", time:ts()}];
+        saveStore(store);
+      }
+      return sess.id;
+    }
+
+    /* ========= RATING UI ========= */
+    function attachRateHandlers(){
+      document.querySelectorAll('.rate-btn').forEach(btn=>{
+        btn.onclick = (e)=>{
+          const b = e.currentTarget;
+          if(b.classList.contains('disabled')) return;
+          const id = b.getAttribute('data-id');
+          const score = +b.getAttribute('data-score');
+          const sessionId = b.getAttribute('data-session') || STATE.currentSessionId;
+          if(!id) return;
+          if(hasRated(id)){ disableRateButtonsFor(id); return; }
+          markRated(id, sessionId, score);
+          disableRateButtonsFor(id);
+          showRatedBadgeFor(id, score);
+        };
+      });
+    }
+    function disableRateButtonsFor(answerId){
+      document.querySelectorAll(`.rate-btn[data-id="${answerId}"]`).forEach(x=>x.classList.add('disabled'));
+    }
+    function showRatedBadgeFor(answerId, score){
+      const msg = document.querySelector(`.msg[data-answer-id="${answerId}"]`);
+      if(!msg) return; const tb = msg.querySelector('.toolbar'); if(!tb) return;
+      let badge = msg.querySelector('.rate-badge');
+      if(!badge){ badge = document.createElement('span'); badge.className='rate-badge'; tb.insertBefore(badge, tb.children[1]||null); }
+      badge.textContent = `Оценено: ★ ${score}`;
+    }
+
+    /* ========= UTIL ========= */
+    function ts(){ return new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}); }
+    function copyMsg(btn){
+      const box = btn.closest('.msg').querySelector('.content'); if(!box) return;
+      navigator.clipboard.writeText(box.innerText.trim()).then(()=>{
+        btn.textContent='Скопировано'; setTimeout(()=>btn.textContent='Копировать',1200);
+      });
+    }
+    function toggleClamp(btn){
+      const content = btn.closest('.msg').querySelector('.content');
+      const clamped = content.classList.contains('clamped');
+      content.classList.toggle('clamped');
+      btn.textContent = clamped ? 'Свернуть' : 'Развернуть';
+    }
+
+    /* ========= INPUT / SEND ========= */
+    const $input = document.getElementById('input');
+    function resizeTA(){ $input.style.height='auto'; $input.style.height = Math.min($input.scrollHeight,160)+'px'; }
+    $input.addEventListener('input', resizeTA);
+    $input.addEventListener('keydown', e=>{ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); send(); }});
+    document.getElementById('sendBtn').addEventListener('click', send);
+    document.querySelectorAll('[data-suggest]').forEach(b=>b.addEventListener('click', e=>{
+      $input.value = e.currentTarget.getAttribute('data-suggest'); resizeTA(); $input.focus();
+    }));
+
+    function pushMessage(sessionId, msg){
+      const store = loadStore();
+      (store.messages[sessionId] ||= []).push(msg);
+      saveStore(store);
+    }
+
+    async function send(){
+      const text = $input.value.trim(); if(!text) return;
+      hideBanners();
+
+      $msgs.insertAdjacentHTML('beforeend', messageTemplate({
+        role:'user', meta:`Пользователь • ${ts()}`, html: mdRender(text)
+      }));
+      scrollToBottom();
+
+      pushMessage(STATE.currentSessionId, {role:'user', text, time:ts()});
+      persistToServer('user', text);
+
+      $input.value=''; resizeTA();
+
+      const loaderId = 'loader_'+Math.random().toString(36).slice(2,8);
+      $msgs.insertAdjacentHTML('beforeend', `<div id="${loaderId}" class="msg"><div class="meta">Ассистент • набирает…</div><div class="content"><span class="muted">…</span></div></div>`);
+      scrollToBottom();
+
+      try{
+        const ans = await apiAsk(text);
+        const $loader = document.getElementById(loaderId); if($loader) $loader.remove();
+
+        const messageId = ans.id || ('ans_'+Math.random().toString(36).slice(2,10));
+        $msgs.insertAdjacentHTML('beforeend', messageTemplate({
+          role:'assistant', meta:`Ассистент • ${ts()}`, html: mdRender(ans.content||''), sources: ans.sources||[], id: messageId
+        }));
+        attachRateHandlers(); scrollToBottom();
+
+        pushMessage(STATE.currentSessionId, {role:'assistant', text:ans.content, time:ts(), id:messageId});
+
+        // Автотема: если в сессии дефолтный заголовок, заменяем его первым предложением ответа
+        try{
+          const store = loadStore();
+          const idx = (store.sessions||[]).findIndex(s=>s.id===STATE.currentSessionId);
+          if(idx > -1){
+            const currentTitle = (store.sessions[idx].title||'').trim();
+            if(isDefaultTitle(currentTitle)){
+              const title = extractFirstSentence(ans.content);
+              if(title) setSessionTitle(STATE.currentSessionId, title);
+            }
+          }
+        }catch(e){ /* ignore */ }
+      }catch(e){
+        console.error(e);
+        const $loader2 = document.getElementById(loaderId); if($loader2) $loader2.remove();
+        showBanner('bannerError');
+      }
+    }
+
+    function showBanner(id){ document.getElementById(id).classList.remove('hidden'); }
+    function hideBanners(){ document.getElementById('bannerOutOfScope').classList.add('hidden'); document.getElementById('bannerError').classList.add('hidden'); }
+
+    /* ========= HISTORY ========= */
+    function onHistoryClick(e){
+      const item = e.target.closest('.hist-item'); if(!item) return;
+      const id = item.getAttribute('data-id'); if(!id) return;
+      openSession(id);
+    }
+    function openSession(id){
+      STATE.currentSessionId = id;
+      renderHistory(); renderDetails(); renderMessages(id); renderTopicTitle();
+      closeCanvas('#history');
+    }
+
+    document.getElementById('newSessionBtn').addEventListener('click', ()=>{
+      const id = 's'+Math.random().toString(36).slice(2,7);
+      const store = loadStore();
+      store.sessions.unshift({id, title:'Новая сессия', avg:0});
+      store.messages[id] = [{role:'assistant', id:`seed_${id}_a1`, text:"Новая сессия. Спросите что-нибудь про КОРП.", time:ts()}];
+      store.topic[id] = {summary:'Новая тема',keywords:['КОРП']};
+      saveStore(store);
+      openSession(id);
+      renderTopicTitle();
+    });
+
+    /* ========= OFFCANVAS ========= */
+    const $overlay = document.getElementById('overlay');
+    function openCanvas(sel){
+      const el=document.querySelector(sel); if(!el) return;
+      el.style.display='block'; requestAnimationFrame(()=> el.classList.add('show'));
+      $overlay.classList.add('show'); document.body.style.overflow='hidden';
+    }
+    function closeCanvas(sel){
+      const el=document.querySelector(sel); if(!el) return;
+      el.classList.remove('show');
+      setTimeout(()=>{ el.style.display='none'; },220);
+      setTimeout(()=>{ if(!document.querySelector('.offc.show')){ $overlay.classList.remove('show'); document.body.style.overflow=''; } },230);
+    }
+    document.getElementById('openHistory').addEventListener('click', ()=>openCanvas('#history'));
+    document.getElementById('openDetails').addEventListener('click', ()=>openCanvas('#details'));
+    document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click', e=>closeCanvas(e.currentTarget.getAttribute('data-close'))));
+    $overlay.addEventListener('click', ()=>{ closeCanvas('#history'); closeCanvas('#details'); });
+    document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ closeCanvas('#history'); closeCanvas('#details'); } });
+    document.getElementById('historyList').addEventListener('click', onHistoryClick);
+
+    /* ========= INIT ========= */
+    function initOrReloadStore(){
+      let st = loadStore(); if(!st){ st = defaultStore(); saveStore(st); }
+      STATE.currentSessionId = (st.sessions[0] && st.sessions[0].id) || null;
+      renderHistory(); renderDetails(); renderMessages(STATE.currentSessionId); renderTopicTitle();
+    }
+    (function init(){
+      initOrReloadStore();
+      renderDetails();
+    })();
+
+    // Тумблер режима
+    document.getElementById('scopeSwitch').addEventListener('change', e=>{
+      STATE.onlyKorp = !!e.target.checked;
+      document.getElementById('modeLabel').textContent = STATE.onlyKorp ? 'КОРП' : 'Широкий';
+      document.getElementById('scopeState').textContent = STATE.onlyKorp ? 'вкл.' : 'выкл.';
+    });
+  </script>
+</body>
+</html>

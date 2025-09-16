@@ -1,0 +1,415 @@
+{% extends "base_for_admin.html" %}
+
+{% block content %}
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<style>
+    :root {
+        --space-black: #0A0F1F;
+        --quantum-blue: #00F0FF;
+        --cyber-purple: #7D4FFF;
+        --neon-green: #CCFF00;
+        --pure-white: #FFFFFF;
+        --grid-color: rgba(255, 255, 255, 0.05);
+        --gradient-1: linear-gradient(135deg, #00F0FF 0%, #7D4FFF 100%);
+        --gradient-2: linear-gradient(135deg, #7D4FFF 0%, #CCFF00 100%);
+    }
+
+    body {
+        font-family: 'Manrope', sans-serif;
+        background-color: var(--space-black);
+        color: var(--pure-white);
+        overflow-x: hidden;
+    }
+
+    .wrapper {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    /* Header */
+    .rating-header {
+        text-align: center;
+        padding: 3rem 0;
+        position: relative;
+    }
+
+    .rating-title {
+        font-size: 3rem;
+        font-weight: 800;
+        background: var(--gradient-1);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 1rem;
+    }
+
+    .rating-subtitle {
+        font-size: 1.25rem;
+        opacity: 0.8;
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    /* Top 3 Section */
+    .top-three-section {
+        margin: 4rem 0;
+        position: relative;
+    }
+
+    .top-three-grid {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        flex-wrap: wrap;
+        perspective: 1000px;
+    }
+
+    .top-card {
+        width: 300px;
+        height: 450px;
+        position: relative;
+        background: rgba(16, 18, 33, 0.7);
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(20px);
+        overflow: hidden;
+        transition: all 0.4s ease;
+        transform-style: preserve-3d;
+    }
+
+    .top-card:hover {
+        transform: translateZ(20px) scale(1.05);
+        box-shadow: 0 0 40px rgba(0, 240, 255, 0.3);
+    }
+
+    .top-card::before {
+        content: '';
+        position: absolute;
+        inset: -50%;
+        background: conic-gradient(
+            transparent,
+            var(--quantum-blue),
+            transparent,
+            var(--cyber-purple),
+            transparent
+        );
+        animation: rotateGlow 8s linear infinite;
+        opacity: 0.2;
+    }
+
+    .top-card-content {
+        position: relative;
+        z-index: 2;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        padding: 2rem;
+    }
+
+    .top-card-icon {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--quantum-blue);
+        box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+        animation: float 4s ease-in-out infinite;
+    }
+
+    .top-card-rank {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        width: 40px;
+        height: 40px;
+        background: var(--gradient-1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--space-black);
+        box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
+    }
+
+    .top-card-name {
+        font-size: 1.25rem;
+        font-weight: 500;
+        text-align: center;
+        margin: 0.5rem 0;
+    }
+
+    .top-card-class {
+        font-size: 1.5rem;
+        font-weight: 700;
+        background: var(--gradient-1);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 1rem;
+    }
+
+    .top-card-profiles {
+        font-size: 0.875rem;
+        opacity: 0.6;
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+
+    .top-card-points {
+        font-size: 1.25rem;
+        background: var(--gradient-1);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    /* Rating Table */
+    .rating-table-section {
+        margin: 4rem 0;
+    }
+
+    .rating-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 1rem;
+        background: rgba(16, 18, 33, 0.5);
+        border-radius: 16px;
+        overflow: hidden;
+        backdrop-filter: blur(10px);
+    }
+
+    .rating-table th {
+        background: rgba(0, 0, 0, 0.3);
+        padding: 1.5rem;
+        font-size: 1.125rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--quantum-blue);
+    }
+
+    .rating-table td {
+        padding: 1.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .rating-table tr {
+        background: rgba(255, 255, 255, 0.03);
+        transition: all 0.3s ease;
+        position: relative; /* Для позиционирования рейтинга */
+    }
+
+    .rating-table tr:hover {
+        background: rgba(0, 240, 255, 0.1);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 240, 255, 0.2);
+    }
+
+    .rating-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 1px solid var(--cyber-purple);
+    }
+
+    .rating-name {
+        font-size: 1rem;
+        font-weight: 400;
+    }
+
+    .rating-class {
+        font-size: 1.125rem;
+        font-weight: 700;
+        background: var(--gradient-2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .rating-profiles {
+        font-size: 0.875rem;
+        opacity: 0.6;
+    }
+
+    .rating-points {
+        font-size: 1.25rem;
+        font-weight: 700;
+        background: var(--gradient-2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .rating-rank {
+        position: absolute;
+        top: 50%;
+        left: 10px;
+        transform: translateY(-50%);
+        width: 40px;
+        height: 40px;
+        background: var(--gradient-1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--space-black);
+        box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
+    }
+
+    /* Animations */
+    @keyframes rotateGlow {
+        100% { transform: rotate(360deg); }
+    }
+
+    @keyframes float {
+        0% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+        100% { transform: translateY(0); }
+    }
+
+    /* Адаптация таблицы для мобильных устройств */
+    @media (max-width: 768px) {
+        .top-three-grid {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .top-card {
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .rating-table {
+            display: block;
+            border-spacing: 0;
+        }
+
+        .rating-table thead {
+            display: none;
+        }
+
+        .rating-table tbody {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .rating-table tr {
+            display: flex;
+            flex-direction: column;
+            background: rgba(16, 18, 33, 0.7);
+            border-radius: 16px;
+            padding: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .rating-table td {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: none;
+        }
+
+        .rating-table td::before {
+            content: attr(data-label);
+            font-weight: 600;
+            color: var(--quantum-blue);
+            margin-right: 1rem;
+            text-transform: uppercase;
+            font-size: 0.875rem;
+        }
+
+        .rating-icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .rating-name,
+        .rating-class,
+        .rating-profiles,
+        .rating-points {
+            font-size: 0.875rem;
+        }
+
+        .top-card-class {
+            font-size: 1.25rem;
+        }
+
+        .rating-rank {
+            position: static; /* Убираем абсолютное позиционирование на мобильных */
+            transform: none; /* Убираем смещение */
+            margin: 0 auto 0.5rem auto; /* Центрируем */
+        }
+    }
+</style>
+
+<div class="wrapper">
+    <!-- Rating Header -->
+    <header class="rating-header" data-aos="fade-down">
+        <h1 class="rating-title">Админский доступ</h1>
+        <p class="rating-subtitle">Проверяйте достижения и рассматривайте пользователей!</p>
+        <p class="rating-subtitle">Админы:</p>
+    </header>
+
+    <!-- Top 3 Section -->
+    <section class="top-three-section" data-aos="fade-up">
+        <div class="top-three-grid">
+            {% for student in top_data %}
+            <div class="top-card">
+                <div class="top-card-rank">{{ loop.index }}</div>
+                <div class="top-card-content">
+                    <img src="static/icons/{{ student.icon }}" class="top-card-icon" alt="{{ student.name }} icon">
+                    <h3 class="top-card-name">{{ student.name }}</h3>
+                    <p class="top-card-class">{{ student.class1 }}</p>
+                    <p class="top-card-profiles">{{ student.profil }}</p>
+                    <p class="top-card-profiles">{{ student.school }}</p>
+                    <p class="top-card-points">{{ student.pointss }} баллов</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+
+<script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script>
+    AOS.init({
+        duration: 1000,
+        once: true,
+        easing: 'ease-in-out-quad'
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const cards = document.querySelectorAll('.top-card');
+        cards.forEach(card => {
+            card.addEventListener('mousemove', function(e) {
+                const rect = this.getBoundingClientRect();
+                const x = (e.clientX - rect.left) / rect.width - 0.5;
+                const y = (e.clientY - rect.top) / rect.height - 0.5;
+
+                const tiltX = y * 15;
+                const tiltY = x * -15;
+
+                this.style.transform = `perspective(1000px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale(1.05)`;
+            });
+
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale(1)';
+            });
+        });
+    });
+</script>
+
+{% endblock %}

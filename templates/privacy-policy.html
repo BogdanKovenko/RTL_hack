@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+
+{% block content %}
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Политика конфиденциальности</title>
+    <style>
+        :root {
+            --space-black: #0A0F1F;
+            --quantum-blue: #00F0FF;
+            --cyber-purple: #7D4FFF;
+            --neon-green: #CCFF00;
+            --pure-white: #FFFFFF;
+            --grid-color: rgba(255, 255, 255, 0.05);
+            --gradient-1: linear-gradient(135deg, #00F0FF 0%, #7D4FFF 100%);
+        }
+
+        .cosmic-grid {
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            background-image:
+                linear-gradient(var(--grid-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: -1;
+        }
+
+        .glow {
+            filter: blur(80px);
+            opacity: 0.3;
+            position: absolute;
+            z-index: -1;
+        }
+
+
+        .privacy-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: rgba(16, 18, 33, 0.8);
+            border-radius: 24px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 100px;
+            margin-bottom: 100px;
+        }
+
+        .privacy-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .privacy-section {
+            margin-bottom: 2rem;
+        }
+
+        .privacy-section h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--quantum-blue);
+            margin-bottom: 1rem;
+        }
+
+        .privacy-section p {
+            font-size: 1rem;
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+
+        .privacy-section ul {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .privacy-section ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .privacy-section a {
+            color: var(--quantum-blue);
+            text-decoration: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .privacy-section a:hover {
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .privacy-container {
+                padding: 1rem;
+                margin-top: 80px;
+                margin-bottom: 80px;
+            }
+
+            .privacy-title {
+                font-size: 2rem;
+            }
+
+            .privacy-section h2 {
+                font-size: 1.5rem;
+            }
+
+            .privacy-section p {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <div class="privacy-container">
+        <h1 class="privacy-title">Политика конфиденциальности</h1>
+
+        <div class="privacy-section">
+            <h2>1. Какие данные мы собираем?</h2>
+            <p>Мы можем собирать следующие данные:</p>
+            <ul>
+                <li><strong>Персональные данные:</strong> Имя, email, класс, профиль обучения (если предоставлены пользователем).</li>
+                <li><strong>Технические данные:</strong> IP-адрес, данные о браузере и устройстве, данные о сессии.</li>
+                <li><strong>Достижения:</strong> Информация о достижениях, добавленных пользователем.</li>
+            </ul>
+        </div>
+
+        <div class="privacy-section">
+            <h2>2. Для чего мы используем данные?</h2>
+            <p>Мы используем данные для следующих целей:</p>
+            <ul>
+                <li>Обеспечение работы сайта и его функций.</li>
+                <li>Аутентификация пользователей.</li>
+                <li>Улучшение пользовательского опыта.</li>
+                <li>Анализ статистики посещений.</li>
+            </ul>
+        </div>
+
+        <div class="privacy-section">
+            <h2>3. Как мы защищаем данные?</h2>
+            <p>Мы принимаем следующие меры для защиты данных:</p>
+            <ul>
+                <li>Использование шифрования (HTTPS) для передачи данных.</li>
+                <li>Ограничение доступа к данным только для уполномоченных лиц.</li>
+                <li>Регулярное обновление систем безопасности.</li>
+            </ul>
+        </div>
+
+        <div class="privacy-section">
+            <h2>4. Передача данных третьим лицам</h2>
+            <p>Мы не передаем ваши данные третьим лицам, за исключением случаев, когда это требуется по закону или необходимо для выполнения наших обязательств перед вами.</p>
+        </div>
+
+        <div class="privacy-section">
+            <h2>5. Ваши права</h2>
+            <p>Вы имеете право:</p>
+            <ul>
+                <li>Запросить доступ к своим данным.</li>
+                <li>Запросить исправление или удаление данных.</li>
+                <li>Отозвать согласие на обработку данных.</li>
+            </ul>
+            <p>Для этого свяжитесь с нами по адресу <a href="mailto:dnevnik_dostizheniy@mail.ru">dnevnik_dostizheniy@mail.ru</a>.</p>
+        </div>
+
+        <div class="privacy-section">
+            <h2>6. Использование куки</h2>
+            <p>Мы используем куки для:</p>
+            <ul>
+                <li>Управления сессиями пользователей.</li>
+                <li>Запоминания предпочтений пользователей.</li>
+                <li>Сбора аналитических данных.</li>
+            </ul>
+            <p>Вы можете отключить куки в настройках вашего браузера, но это может повлиять на функциональность сайта.</p>
+        </div>
+
+        <div class="privacy-section">
+            <h2>7. Контактная информация</h2>
+            <p>Если у вас есть вопросы, свяжитесь с нами по адресу <a href="mailto:dnevnik_dostizheniy@mail.ru">dnevnik_dostizheniy@mail.ru</a>.</p>
+            <p><strong>Дата последнего обновления:</strong> 7 марта 2025 г.</p>
+        </div>
+    </div>
+</body>
+{% endblock %}

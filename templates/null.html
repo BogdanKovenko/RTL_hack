@@ -1,0 +1,234 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    :root {
+        --space-black: #0A0F1F;
+        --quantum-blue: #00F0FF;
+        --cyber-purple: #7D4FFF;
+        --neon-green: #CCFF00;
+        --pure-white: #FFFFFF;
+        --grid-color: rgba(255, 255, 255, 0.05);
+        --gradient-1: linear-gradient(135deg, #00F0FF 0%, #7D4FFF 100%);
+    }
+
+    body {
+        font-family: 'Manrope', sans-serif;
+        background-color: var(--space-black);
+        color: var(--pure-white);
+        overflow-x: hidden;
+    }
+
+    /* Контейнер страницы */
+    .container {
+        max-width: 1280px;
+        margin: 100px auto;
+        padding: 20px;
+    }
+
+    /* Заголовок страницы */
+    .header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+    .header h1 {
+        font-size: 3.5rem;
+        font-weight: 800;
+        background: var(--gradient-1);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 10px;
+    }
+    .header p {
+        font-size: 1.25rem;
+        color: var(--pure-white);
+        opacity: 0.8;
+    }
+
+    /* Панель кнопок для страницы достижений */
+    .button-group {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-bottom: 50px;
+    }
+    .button-group form {
+        display: inline-block;
+    }
+    .ach-btn {
+        padding: 10px 20px;
+        border: 1px solid var(--quantum-blue);
+        background: transparent;
+        color: var(--quantum-blue);
+        text-transform: uppercase;
+        font-weight: 600;
+        letter-spacing: 1px;
+        border-radius: 7px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%; /* Для одинаковой ширины кнопок */
+        box-sizing: border-box;
+    }
+    .ach-btn:hover {
+        background: var(--quantum-blue);
+        color: var(--space-black);
+        box-shadow: 0 0 30px 5px rgba(0, 240, 255, 0.8);
+    }
+
+    /* Пустое состояние */
+    .empty-state {
+        background: rgba(16, 18, 33, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 24px;
+        backdrop-filter: blur(40px);
+        padding: 40px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+    .empty-state::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: conic-gradient(
+            from 180deg at 50% 50%,
+            transparent 0deg,
+            #00F0FF 60deg,
+            transparent 120deg,
+            #7D4FFF 180deg,
+            transparent 240deg
+        );
+        animation: rotate 8s linear infinite;
+        opacity: 0.1;
+    }
+    .empty-state h2 {
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+        color: var(--pure-white);
+    }
+    .empty-state p {
+        font-size: 1.2rem;
+        color: rgba(255, 255, 255, 0.8);
+        margin-bottom: 30px;
+    }
+    .empty-state img {
+        width: 200px;
+        height: auto;
+        opacity: 0.8;
+        margin-top: 20px;
+    }
+
+    @keyframes rotate {
+        100% { transform: rotate(360deg); }
+    }
+
+    /* Адаптивность */
+    @media (max-width: 768px) {
+        .container {
+            margin: 60px auto;
+            padding: 15px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+        }
+        .header p {
+            font-size: 1rem;
+        }
+
+        .button-group {
+            flex-direction: column; /* Кнопки в столбец */
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        .ach-btn {
+            width: 100%; /* Полная ширина */
+            padding: 12px 15px; /* Удобные отступы */
+            font-size: 0.9rem; /* Уменьшенный шрифт */
+        }
+
+        .empty-state {
+            padding: 30px;
+        }
+        .empty-state h2 {
+            font-size: 2rem;
+        }
+        .empty-state p {
+            font-size: 1rem;
+        }
+        .empty-state img {
+            width: 150px; /* Уменьшенное изображение */
+        }
+    }
+
+    @media (max-width: 480px) {
+        .container {
+            margin: 40px auto;
+            padding: 10px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+        }
+        .header p {
+            font-size: 0.9rem;
+        }
+
+        .ach-btn {
+            font-size: 0.85rem;
+            padding: 10px 12px;
+        }
+
+        .empty-state {
+            padding: 20px;
+        }
+        .empty-state h2 {
+            font-size: 1.5rem;
+        }
+        .empty-state p {
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+        .empty-state img {
+            width: 120px; /* Ещё меньше для маленьких экранов */
+        }
+    }
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<div class="container">
+    <div class="header">
+        <h1>Достижения</h1>
+        <p>Ваш путь к успеху начинается здесь. Каждое достижение – это шаг к новым вершинам!</p>
+    </div>
+
+    <div class="button-group">
+        <form method="post">
+            <button class="ach-btn" name="Добавить">Добавить достижение</button>
+        </form>
+        <form method="post">
+            <button class="ach-btn" name="Проверенные">Проверенные</button>
+        </form>
+        <form method="post">
+            <button class="ach-btn" name="На_рассмотрении">На рассмотрении</button>
+        </form>
+        <form method="post">
+            <button class="ach-btn" name="Отклоненные_достижения">Отклоненные достижения</button>
+        </form>
+    </div>
+
+    <div class="empty-state">
+        <h2>{{ message }}</h2>
+        <p>Пока у вас нет достижений, но впереди – целый мир возможностей! Начните добавлять свои успехи и наблюдайте, как растёт ваша мотивация.</p>
+        <!-- Путь к изображению можно изменить под ваши нужды -->
+        <img src="/static/image/123.svg" alt="Нет достижений">
+    </div>
+</div>
+{% endblock %}

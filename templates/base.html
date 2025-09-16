@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap" rel="stylesheet" />
+  <title>{{ title or 'RLT.Tender_Guide (КОРП)' }}</title>
+
+  <style>
+    :root{
+      /* Палитра как в index.html */
+      --space-black:#0A0F1F;
+      --quantum-blue:#00F0FF;
+      --cyber-purple:#7D4FFF;
+      --neon-green:#CCFF00;
+      --pure-white:#FFFFFF;
+      --muted:#A9B1C6;
+      --grid-color:rgba(255,255,255,0.05);
+      --border:rgba(255,255,255,0.10);
+      --chip:rgba(255,255,255,0.06);
+      --gradient-1:linear-gradient(135deg,#00F0FF 0%,#7D4FFF 100%);
+      --gradient-2:linear-gradient(135deg,#7D4FFF 0%,#CCFF00 100%);
+      --card:#101426;
+      --panel:#0F1426;
+      --shadow:0 10px 30px rgba(0,0,0,.35);
+      --radius:18px;
+      --maxw:1280px;
+    }
+
+    /* База */
+    html,body{height:100%}
+    body{
+      margin:0; color:var(--pure-white); background:var(--space-black);
+      font-family:'Manrope',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      overflow-x:hidden; position:relative;
+      /* те же мягкие свечения/градиенты, что в index.html */
+      background-image:
+        radial-gradient(1800px 1200px at 110% -10%, rgba(0,240,255,.06) 0%, transparent 60%),
+        radial-gradient(1600px 1200px at -15% 120%, rgba(125,79,255,.06) 0%, transparent 60%);
+      animation:gradientAnimation 12s ease-in-out infinite;
+      background-size:cover;
+    }
+    @keyframes gradientAnimation{
+      0%{background-position:0% 50%}
+      50%{background-position:100% 50%}
+      100%{background-position:0% 50%}
+    }
+    @media (prefers-reduced-motion:reduce){ body{animation:none} }
+
+    /* Фоновые эффекты */
+    .background-effects{position:fixed; inset:0; z-index:-1; overflow:hidden}
+    .cosmic-grid{
+      position:absolute; inset:0;
+      background-image:
+        linear-gradient(var(--grid-color) 1px,transparent 1px),
+        linear-gradient(90deg,var(--grid-color) 1px,transparent 1px);
+      background-size:40px 40px;
+    }
+    .glow{position:absolute; filter:blur(90px); opacity:.28}
+    .glow.blue{background:var(--quantum-blue); width:640px; height:640px; top:-280px; right:-320px;}
+    .glow.purple{background:var(--cyber-purple); width:520px; height:520px; bottom:-260px; left:-260px;}
+    .glow.green{background:var(--neon-green); width:420px; height:420px; top:50%; left:50%; transform:translate(-50%,-50%); opacity:.08;}
+
+    /* Контейнер/отступы */
+    main{padding-top:110px}
+    .container{max-width:var(--maxw)}
+
+    /* Карты и панели (как на index.html) */
+    .holographic-card{
+      background:rgba(16,18,33,.60);
+      border:1px solid var(--border);
+      border-radius:24px;
+      backdrop-filter:blur(40px);
+      transition:transform .35s cubic-bezier(.23,1,.32,1), box-shadow .35s;
+      box-shadow:var(--shadow);
+      position:relative; overflow:hidden;
+    }
+    .holographic-card::before{
+      content:''; position:absolute; top:-50%; left:-50%;
+      width:200%; height:200%;
+      background:conic-gradient(from 180deg at 50% 50%,
+         transparent 0deg, #00F0FF 60deg, transparent 120deg, #7D4FFF 180deg, transparent 240deg);
+      opacity:.12; animation:spin 7s linear infinite;
+      pointer-events:none;
+    }
+    @keyframes spin{ to{ transform:rotate(360deg) } }
+    .holographic-card:hover{ transform:translateY(-4px); box-shadow:0 14px 40px rgba(0,240,255,.22) }
+
+    /* Кнопки */
+    .button1, .btn-neo{
+      appearance:none; border:1px solid rgba(0,240,255,.5); color:var(--quantum-blue);
+      background:transparent; padding:10px 16px; border-radius:12px; font-weight:700; letter-spacing:.02em;
+      transition:transform .18s ease, box-shadow .22s ease, border-color .22s ease, color .22s ease, background .22s ease;
+      display:inline-flex; align-items:center; justify-content:center; gap:8px; text-transform:uppercase; font-size:12px;
+    }
+    .button1:hover, .btn-neo:hover{ background:var(--gradient-1); color:#031016; box-shadow:0 0 24px rgba(0,240,255,.35); transform:translateY(-1px) }
+    .btn-chip{background:var(--chip); border:1px solid transparent; color:var(--pure-white); border-radius:999px; padding:8px 12px; font-weight:600}
+    .btn-chip:hover{filter:brightness(1.1)}
+
+    /* Формы (под цветовую схему) */
+    .form-control, input[type="text"], input[type="email"], input[type="password"], textarea, select{
+      background:rgba(10,15,31,.55);
+      border:1px solid var(--border);
+      color:var(--pure-white);
+      border-radius:12px; padding:12px 14px;
+      transition:border-color .25s ease, box-shadow .25s ease, background .25s ease;
+    }
+    .form-control:focus, input:focus, textarea:focus, select:focus{
+      outline:none; border-color:rgba(0,240,255,.55);
+      box-shadow:0 0 0 3px rgba(0,240,255,.18);
+      background:rgba(10,15,31,.66);
+    }
+    label{font-weight:600; color:var(--pure-white); margin-bottom:.35rem}
+    .form-hint{color:var(--muted); font-size:.9rem}
+
+    /* Ссылки */
+    a{color:var(--quantum-blue); text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    /* Навбар — оставлен пустым в разметке (как ты просил), но стили на будущее */
+    .navbar-custom{
+      background:rgba(16,18,33,.6)!important;
+      border:1px solid var(--border);
+      backdrop-filter:blur(10px);
+      width:80%; margin:20px auto; padding:10px 20px; border-radius:50px; z-index:1000;
+      transition:all .3s ease;
+    }
+    .navbar-toggler{border:none}
+    .navbar-toggler-icon{
+      background-image:url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(0,240,255,1)' stroke-width='2' stroke-linecap='round' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+    }
+    @media (max-width:768px){
+      .navbar-custom{width:90%; padding:10px}
+      .navbar-collapse{
+        max-height:0; overflow:hidden; opacity:0; padding:0;
+        transition:max-height .5s ease, opacity .3s ease, padding .3s ease;
+        border-radius:0 0 15px 15px;
+      }
+      .navbar-collapse.show{max-height:80vh; opacity:1; padding:15px; overflow-y:auto}
+      .nav-item{margin:8px 0}
+      .button1{width:100%}
+    }
+
+    /* Утилиты */
+    .muted{color:var(--muted)}
+    .chip{display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; background:var(--chip); color:var(--pure-white); font-size:.85rem}
+    .section{margin:1.25rem 0}
+    .card-pad{padding:1.25rem 1.5rem}
+    .shadow-lg{box-shadow:var(--shadow)}
+    .radius{border-radius:var(--radius)}
+  </style>
+
+  {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+  <!-- фоновые эффекты -->
+  <div class="background-effects">
+    <div class="cosmic-grid"></div>
+    <div class="glow blue"></div>
+    <div class="glow purple"></div>
+    <div class="glow green"></div>
+  </div>
+
+  <!-- header намеренно пустой (без логотипа/меню) -->
+  <header></header>
+
+  <main role="main" class="container">
+    {% block content %}{% endblock %}
+  </main>
+
+  <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+
+  <script>
+    // Опционально: поддержка коллапса, если позже вернёшь навбар
+    document.addEventListener('DOMContentLoaded', function(){
+      var toggler=document.querySelector('.navbar-toggler');
+      var collapse=document.querySelector('#navbarNav');
+      if(toggler && collapse){
+        if(!collapse.classList.contains('show')) collapse.style.display='none';
+        toggler.addEventListener('click',function(){
+          if(collapse.classList.contains('show')){
+            setTimeout(function(){ if(!collapse.classList.contains('show')) collapse.style.display='none'; },350);
+          }else{ collapse.style.display='block'; }
+        });
+        window.addEventListener('resize',function(){
+          if(window.innerWidth>991){ collapse.style.removeProperty('display'); }
+          else if(!collapse.classList.contains('show')) collapse.style.display='none';
+        });
+      }
+    });
+  </script>
+
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

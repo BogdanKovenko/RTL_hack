@@ -1,0 +1,215 @@
+{% extends "base_for_admin.html" %}
+{% block content %}
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Модерация заявок</title>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --space-bg: #0A0F1F;
+            --card-bg: rgba(16, 18, 33, 0.85);
+            --neon-blue: #00F0FF;
+            --neon-purple: #7D4FFF;
+            --neon-red: #FF4F4F;
+            --neon-green: #CCFF00;
+            --text-primary: #FFFFFF;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --border-color: rgba(255, 255, 255, 0.12);
+        }
+
+        body {
+            font-family: 'Manrope', sans-serif;
+            background-color: var(--space-bg);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 0;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--neon-blue);
+            text-decoration: none;
+            font-size: 14px;
+            margin-bottom: 24px;
+            font-weight: 500;
+            padding: 8px 16px;
+            background: rgba(0, 240, 255, 0.08);
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .back-link:hover {
+            background: rgba(0, 240, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+            border-left: 3px solid var(--neon-blue);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 240, 255, 0.15);
+            border-color: rgba(0, 240, 255, 0.3);
+        }
+
+        .card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, rgba(0, 240, 255, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .card h3 {
+            margin: 0 0 12px 0;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            position: relative;
+            z-index: 1;
+        }
+
+        .card h3:first-child {
+            color: var(--neon-blue);
+            margin-bottom: 6px;
+        }
+
+        .card p {
+            margin: 8px 0;
+            font-size: 15px;
+            color: var(--text-secondary);
+            position: relative;
+            z-index: 1;
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        button {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            font-family: 'Manrope', sans-serif;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.25s;
+            border: 1px solid;
+            background: transparent;
+        }
+
+        button[name*="Отклонить"] {
+            color: var(--neon-red);
+            border-color: rgba(255, 79, 79, 0.3);
+        }
+
+        button[name*="Принять"] {
+            color: var(--neon-green);
+            border-color: rgba(204, 255, 0, 0.3);
+        }
+
+        button[name*="Отклонить"]:hover {
+            background: rgba(255, 79, 79, 0.1);
+            border-color: var(--neon-red);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 79, 79, 0.2);
+        }
+
+        button[name*="Принять"]:hover {
+            background: rgba(204, 255, 0, 0.1);
+            border-color: var(--neon-green);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(204, 255, 0, 0.2);
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 16px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        {% for error in data %}
+            <div class="card">
+                <h3>{{error.name}}</h3>
+                <h3>email: {{error.email}}</h3>
+                <p>Класс - {{error.class1}}</p>
+                <p>Профили - {{error.profil}}</p>
+                <p>Статус - {{error.status_at_school}}</p>
+                <p>Школа - {{error.school}}</p>
+                <p>Подал заявку - {{error.created_date}}</p>
+                <form method="post" class="actions">
+                    <button type="submit" name="Отклонить|{{error.email}}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                        Отклонить
+                    </button>
+                    <button type="submit" name="Принять|{{error.email}}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Принять
+                    </button>
+                </form>
+            </div>
+        {% endfor %}
+    </div>
+</body>
+{% endblock %}
